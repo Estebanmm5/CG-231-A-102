@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Titulo</title>
+        <style>
+            html, body { margin: 0; padding: 0; overflow: hidden; }
+            #text {
+                position: absolute;
+                padding: 10px;
+                width: 100%;
+                text-align: center;
+                color: #FFFFFF;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="text">Taller cubos<br/>
+            Esteban Mojica<br/>
+            6000617<br/>
+        </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r94/three.min.js"></script>
+    <script>
+
+        // Función para crear un cubo
+        function cubo(posini, lado, color, material) {
+            var vertices = [
+                new THREE.Vector3(-lado / 2, -lado / 2, -lado / 2),
+                new THREE.Vector3(lado / 2, -lado / 2, -lado / 2),
+                new THREE.Vector3(lado / 2, -lado / 2, lado / 2),
+                new THREE.Vector3(lado / 2, -lado / 2, -lado / 2),
+                new THREE.Vector3(lado / 2, lado / 2, -lado / 2),
+                new THREE.Vector3(lado / 2, lado / 2, lado / 2),
+                new THREE.Vector3(lado / 2, lado / 2, -lado / 2),
+                new THREE.Vector3(-lado / 2, lado / 2, -lado / 2),
+                new THREE.Vector3(-lado / 2, lado / 2, -lado / 2),
+                new THREE.Vector3(-lado / 2, lado / 2, lado / 2),
+                new THREE.Vector3(-lado / 2, -lado / 2, lado / 2),
+                new THREE.Vector3(lado / 2, -lado / 2, lado / 2),
+                new THREE.Vector3(lado / 2, lado / 2, lado / 2),
+                new THREE.Vector3(-lado / 2, lado / 2, lado / 2),
+                new THREE.Vector3(-lado / 2, -lado / 2, lado / 2),
+                new THREE.Vector3(-lado / 2, -lado / 2, -lado / 2),
+            ];
+
+            var geometry = new THREE.Geometry();
+            geometry.vertices = vertices;
+            geometry.computeVertexNormals();
+            
+
+            var material = new THREE.LineBasicMaterial({ color: color });
+            var cube = new THREE.Line(geometry, material);
+            cube.position.set(posini[0], posini[1], posini[2]);
+            return cube;
+        }
+
+        // Escena
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);    
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0x000000, 1.0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        var size = 700;
+        var arrowSize = 40;
+        var divisions = 20; 
+        var origin = new THREE.Vector3( 0, 0, 0 );
+        var x = new THREE.Vector3( 1, 0, 0 );
+        var y = new THREE.Vector3( 0, 1, 0 );
+        var z = new THREE.Vector3( 0, 0, 1 );
+        var color2 = new THREE.Color( 0x333333 );  
+        var colorR = new THREE.Color( 0xAA0000 ); // color 
+        var colorG = new THREE.Color( 0x00AA00 );
+        var colorB = new THREE.Color( 0x0000AA );
+
+        //Crear la Rejilla 
+        var gridHelperXZ = new THREE.GridHelper( size, divisions, color2, color2); // tamaños division color  plano horizontal 
+
+        //Flechas
+        var arrowX = new THREE.ArrowHelper( x, origin, arrowSize, colorR );              
+        var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
+        var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB ); // Arrorws helpers 
+			
+        //Cámara
+        camera.position.x = 200;
+        camera.position.y = 200;
+        camera.position.z = 400;
+        camera.lookAt(scene.position);
+        document.body.appendChild(renderer.domElement);
+
+        // especificaciones del cubo
+        var lado = 80; 
+        var color = 0xff0000;
+        var material = new THREE.LineBasicMaterial({ color: color });
+        var cube = cubo([0, 0, 0], 80, 0xff0000, material);
+        var cubetras = cubo([0, 0, 0], 80, 0x00ff00, material);
+        var cubescal = cubo([0, 0, 0], 80, 0x0000AA, material);
+        var cuberot = cubo([0, 0, 0], 80, 0xffffff, material);
+
+        // Matriz de Traslación
+        var matrizT = new THREE.Matrix4();
+        matrizT.set(1, 0, 0, lado,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1);
+
+                cubetras.applyMatrix(matrizT);
+
+        // Matriz de Escala
+        var matrizS = new THREE.Matrix4();
+        matrizS.set(1.5, 0, 0, 0,
+                0, 1.5, 0, 0,
+                0, 0, 1.5, 0,
+                0, 0, 0, 1.5);
+
+                cubescal.applyMatrix(matrizS);
+
+                var matrizR = new THREE.Matrix4();
+        var alpha = 45;
+		var cs = Math.cos(alpha);
+		var ss = Math.sin(alpha);
+
+		matrizR.set(1,  0, 0, 0,
+        		0, cs, -ss, 0, 
+				0, ss, cs, 0,
+				0, 0, 0, 1);	
+
+                cuberot.applyMatrix(matrizR);
+        
+
+        document.body.appendChild(renderer.domElement); //Agrega el render al document 
+
+        // Agregar las ayudas al escenario y el cubo*
+        scene.add(gridHelperXZ);
+	    scene.add(arrowX);	
+		scene.add(arrowY);	
+		scene.add(arrowZ);
+        scene.add(cube);
+        scene.add(cubetras);
+        scene.add(cubescal);
+        scene.add(cuberot);
+        
+    
+
+        renderer.render(scene, camera);
+    </script>
+</body>
+</html>
